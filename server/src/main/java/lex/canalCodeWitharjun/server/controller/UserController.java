@@ -1,9 +1,9 @@
 package lex.canalCodeWitharjun.server.controller;
 
-import lex.canalCodeWitharjun.server.exception.UserNotFoundException;
 import lex.canalCodeWitharjun.server.model.User;
-import lex.canalCodeWitharjun.server.repository.UserRepository;
+import lex.canalCodeWitharjun.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,42 +12,37 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
+    // create user
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        User newUser = userRepository.save(user);
-        return newUser;
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return ResponseEntity.status(201).body(userService.create(user));
     }
 
+    // all users
     @GetMapping
     public List<User> readAllUsers() {
-        List<User> listUsers = userRepository.findAll();
-        return listUsers;
+        return userService.readAll();
     }
 
+    // one user
     @GetMapping("/{id}")
-    public User readOneUserById(@PathVariable Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public ResponseEntity<User> readOneUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.readOne(id));
     }
 
+    // edit user
     @PutMapping("/{id}")
-    public User updateUserById(@PathVariable Long id, @RequestBody User userUpdate) {
-        return userRepository.findById(id)
-                .map(user ->{
-                        user.setNome(userUpdate.getNome());
-                        user.setApelido(userUpdate.getApelido());
-                        user.setEmail(userUpdate.getEmail());
-                        user.setAnoNascimento(userUpdate.getAnoNascimento());
-                        return userRepository.save(user);
-                }).orElseThrow(() -> new UserNotFoundException(id));
+    public ResponseEntity<String> updateUserById(@PathVariable Long id, @RequestBody User userUpdate) {
+        userService.update(id, userUpdate);
+        return ResponseEntity.ok("\"" + userUpdate.getNome() + "\" Editado com sucesso");
     }
 
+    // delete user
     @DeleteMapping("/{id}")
-    public String deleteUserById(@PathVariable Long id) {
-        if (!userRepository.existsById(id)) throw new UserNotFoundException(id);
-
-        userRepository.deleteById(id);
-        return "User com id: " + id + ", foi deletado com sucesso!";
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+        userService.delete(id);
+        return ResponseEntity.ok("Deletado com sucesso");
     }
 }
