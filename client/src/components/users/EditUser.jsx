@@ -96,7 +96,7 @@ export default function EditUser() {
                 </div>
                 <div className="flex items-center gap-2">
                     <button type="submit" className="grow-0 mt-2 py-2 px-6 bg-blue-800 text-white font-medium rounded-lg cursor-pointer transition-all duration-300 hover:bg-blue-900">
-                        Cadastrar
+                        Atualizar
                     </button>
                     <Link to={"/"} className="grow-0 mt-2 py-2 px-6 bg-red-800 text-white font-medium rounded-lg cursor-pointer transition-all duration-300 hover:bg-red-900">
                         Cancelar
