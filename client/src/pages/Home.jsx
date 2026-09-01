@@ -1,25 +1,55 @@
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Search, Trash2 } from "lucide-react";
 import Th from "../components/ui/Th";
 import Td from "../components/ui/Td";
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Input from "../components/ui/Input";
+import { deleteUser, readAllUsers, readOneUser, buscarUserPorNome } from "../service/users.service";
+
 
 export default function Home() {
     const [users, setUsers] = useState([])
 
+    const [nome, setNome] = useState()
+
+    const buscarUserPorNomes = async () => {
+        await buscarUserPorNome(nome).then((res) => {
+            setUsers(res.data)
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    useEffect(() => {
+        buscarUserPorNomes()
+    }, [nome])
+
+
     const getUsers = useCallback(async () => {
-        const result = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
-        setUsers(result.data);
+        await readAllUsers().then((response) => {
+            setUsers(response.data)
+        }).catch(e => {
+            console.error(e)
+        })
     }, [])
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         getUsers()
     }, [getUsers])
 
     async function deleteUsers(id) {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/users/${id}`)
+        // Pegar o user para exibir uma msg
+        await readOneUser(id).then((res) => {
+            alert("\"" + res.data.nome + "\", Deletado com sucesso!");
+        }).catch((e) => {
+            console.log(e)
+        })
+        // Remover o USER da BD
+        await deleteUser(id).then(() => {
+            
+        }).catch((e) => {
+            console.log(e)
+        })
         getUsers()
     }
 
@@ -32,7 +62,27 @@ export default function Home() {
                     Lista de Usuarios
                 </h1>
 
-                <table className="w-full border-collapse text-slate-900 rounded-2xl overflow-hidden">
+                <div className="flex items-center justify-between mt-2 mb-4">
+                    <div className="flex items-center gap-2">
+                        <Input
+                            placeholder={"Pesquise por nome..."}
+                            type={"text"}
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}
+                        />
+                        <button className="cursor-pointer py-2 px-3 bg-slate-800 hover:bg-slate-900 text-slate-100 rounded-lg transition-all duration-300">
+                            <Search size={18} className="font-bold" />
+                        </button>
+                    </div>
+                    {/* botoes de acoes */}
+                    <div>
+                        <Link to="/adduser" className="py-2 px-6 bg-blue-800 text-white font-medium rounded-xl cursor-pointer transition-all duration-300 hover:bg-blue-900">
+                            Add User
+                        </Link>
+                    </div>
+                </div>
+
+                <table className="w-full border-collapse text-slate-900 rounded-xl overflow-hidden">
                     <thead className="bg-slate-900 text-white">
                         <tr>
                             {ths.map((thName, index) =>
@@ -44,7 +94,7 @@ export default function Home() {
                         {users.length >= 1 ?
                             users.map((user, index) =>
                                 <tr key={index} className={`${index % 2 === 0 ? "bg-slate-200" : "bg-slate-100"} hover:bg-slate-300 duration-300 ease-in`}>
-                                    <Td text={user.id} />
+                                    <Td text={`#${user.id < 10 ? `0${user.id}` : `${user.id}` }`} />
                                     <Td text={user.nome} />
                                     <Td text={user.apelido} />
                                     <Td text={user.email} />

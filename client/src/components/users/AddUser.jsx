@@ -2,7 +2,7 @@ import { useState } from "react";
 import Input from "../ui/Input";
 import Label from "../ui/Label";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { createUser } from "../../service/users.service";
 
 export default function AddUser() {
     const navigate = useNavigate()
@@ -21,7 +21,10 @@ export default function AddUser() {
 
     const onsubmit = async (e) => {
         e.preventDefault();
-        await axios.post(`${import.meta.env.VITE_API_URL}/users`, user)
+        
+        await createUser(user).then((response) => {
+            alert(response.data.nome + " adicionado com sucesso!")
+        })
 
         navigate("/")
     }

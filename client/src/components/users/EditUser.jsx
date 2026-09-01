@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Input from "../ui/Input";
 import Label from "../ui/Label";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { readOneUser, updateUser } from "../../service/users.service";
 
 export default function EditUser() {
     const navigate = useNavigate()
@@ -21,18 +21,27 @@ export default function EditUser() {
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
+    // Funcao para editar os dados do USER
     const onsubmit = async (e) => {
         e.preventDefault();
-        await axios.put(`${import.meta.env.VITE_API_URL}/users/${id}`, user)
+        await updateUser(id, user).then((res) => {
+            alert(`${res.data.nome} editado com sucesso!`)
+        }).catch((error) => {
+            console.log(error)
+        })
 
         navigate("/")
     }
 
+    // Funcao para pegar os dados do USER que vai ser Actualizado
     useEffect(() => {
         const getUser = async () => {
-        const result = await axios.get(`${import.meta.env.VITE_API_URL}/users/${id}`)
-        setUser(result.data)
-    }
+            await readOneUser(id).then((response) => {
+                setUser(response.data)
+            }).catch((e) => {
+                console.log(e)
+            })
+        }
         getUser()
     }, [id])
 
