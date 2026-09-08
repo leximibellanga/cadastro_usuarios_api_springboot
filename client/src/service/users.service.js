@@ -17,7 +17,5 @@ export const updateUser = (id, user) => axios.put(`${BASE_URL}/users/${id}`, use
 // deletar um user
 export const deleteUser = (id) => axios.delete(`${BASE_URL}/users/${id}`)
 
-
-
 // Buscar user por nome
 export const buscarUserPorNome = (nome) => axios.get(`${BASE_URL}/users/buscar?nome=${nome}`)
