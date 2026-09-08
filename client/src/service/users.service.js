@@ -1,5 +1,6 @@
 import axios from "axios"
 
+// pegar url do back atraves da variavel de ambiente
 const BASE_URL = import.meta.env.VITE_API_URL
 
 // listar todos Users
