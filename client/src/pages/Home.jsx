@@ -12,6 +12,7 @@ export default function Home() {
 
     const [nome, setNome] = useState()
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const buscarUserPorNomes = async () => {
         await buscarUserPorNome(nome).then((res) => {
             setUsers(res.data)
@@ -22,7 +23,7 @@ export default function Home() {
 
     useEffect(() => {
         buscarUserPorNomes()
-    }, [nome])
+    }, [buscarUserPorNomes, nome])
 
 
     const getUsers = useCallback(async () => {
