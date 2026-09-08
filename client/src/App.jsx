@@ -4,7 +4,7 @@ import Home from "./pages/Home"
 import AddUser from "./components/users/AddUser"
 import EditUser from "./components/users/EditUser"
 import ViewUser from "./components/users/ViewUser"
-// import Footer from "./components/layout/Footer"
+import Footer from "./components/layout/Footer"
 
 function App() {
 
@@ -29,7 +29,7 @@ function App() {
           </Routes>
         </main>
 
-        {/* <Footer /> */}
+        <Footer />
       </Router>
     </>
   )
